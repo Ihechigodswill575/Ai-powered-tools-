@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebymedias Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: #111827;
+            color: white;
+        }
+
+        body.light {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid;
+        }
+
+        .dark .header {
+            background-color: rgba(31, 41, 55, 0.9);
+            border-color: #374151;
+        }
+
+        .light .header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: #e5e7eb;
+        }
+
+        .header-content {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .username-badge {
+            padding: 4px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .dark .username-badge {
+            background-color: #374151;
+        }
+
+        .light .username-badge {
+            background-color: #e5e7eb;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #f59e0b, #dc2626) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .theme-toggle, .admin-btn {
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: transparent;
+        }
+
+        .dark .theme-toggle, .dark .admin-btn {
+            background-color: #374151;
+        }
+
+        .light .theme-toggle, .light .admin-btn {
+            background-color: #e5e7eb;
+        }
+
+        .theme-toggle:hover, .admin-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #f59e0b, #dc2626) !important;
+            color: white !important;
+        }
+
+        .username-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .username-card {
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            max-width: 448px;
+            width: 100%;
+            border: 1px solid;
+        }
+
+        .dark .username-card {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .light .username-card {
+            background-color: white;
+            border-color: #e5e7eb;
+        }
+
+        .username-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 16px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            transform: rotate(12deg);
+        }
+
+        .username-logo span {
+            transform: rotate(-12deg);
+        }
+
+        .username-title {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .username-title h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .username-title p {
+            opacity: 0.7;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .dark .input-group input {
+            background-color: #374151;
+            color: white;
+        }
+
+        .light .input-group input {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .input-group input:focus {
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: #a855f7;
+            border: 2px solid #a855f7;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #a855f7;
+            color: white;
+        }
+
+        .messages-container {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 24px 16px 120px;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(168, 85, 247, 0.2);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .empty-icon {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+            font-size: 48px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 384px;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .message.own .message-meta {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            border-top-right-radius: 4px;
+        }
+
+        .dark .message:not(.own) .message-bubble {
+            background-color: #374151;
+            color: white;
+            border-top-left-radius: 4px;
+        }
+
+        .light .message:not(.own) .message-bubble {
+            background-color: #f3f4f6;
+            color: #111827;
+            border-top-left-radius: 4px;
+        }
+
+        .message-bubble img {
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .message:hover .delete-btn {
+            display: flex;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            backdrop-filter: blur(12px);
+            border-top: 1px solid;
+        }
+
+        .dark .input-area {
+            background-color: rgba(31, 41, 55, 0.9);
+            border-color: #374151;
+        }
+
+        .light .input-area {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: #e5e7eb;
+        }
+
+        .input-controls {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .dark .icon-btn {
+            background-color: #374151;
+            color: white;
+        }
+
+        .light .icon-btn {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .dark .message-input {
+            background-color: #374151;
+            color: white;
+        }
+
+        .light .message-input {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .message-input:focus {
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.5);
+        }
+
+        .send-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .online-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .admin-panel-content {
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid;
+        }
+
+        .dark .admin-panel-content {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+
+        .light .admin-panel-content {
+            background-color: white;
+            border-color: #e5e7eb;
+        }
+
+        .admin-panel h2 {
+            margin-bottom: 24px;
+            text-align: center;
+            background: linear-gradient(135deg, #f59e0b, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .admin-action-btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: scale(1.02);
+        }
+
+        .btn-close {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-close:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="dark">
+    <div id="usernameScreen" class="username-screen">
+        <div class="username-card">
+            <div class="username-logo">
+                <span>💬</span>
+            </div>
+            <div class="username-title">
+                <h1>Ebymedias Chat</h1>
+                <p>Connect, Share, Communicate</p>
+            </div>
+            <div class="input-group">
+                <label>Choose your username</label>
+                <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="20">
+            </div>
+            <button class="btn-primary" onclick="setUsername()">Join Chat</button>
+            <button class="btn-secondary" onclick="showAdminLogin()">Admin Login</button>
+        </div>
+    </div>
+
+    <div id="adminLoginScreen" class="username-screen hidden">
+        <div class="username-card">
+            <div class="username-logo">
+                <span>🔐</span>
+            </div>
+            <div class="username-title">
+                <h1>Admin Login</h1>
+                <p>Enter admin credentials</p>
+            </div>
+            <div class="input-group">
+                <label>Admin Username</label>
+                <input type="text" id="adminUsernameInput" placeholder="Enter username..." maxlength="20">
+            </div>
+            <div class="input-group">
+                <label>Admin Password</label>
+                <input type="password" id="adminPasswordInput" placeholder="Enter password...">
+            </div>
+            <button class="btn-primary" onclick="loginAdmin()">Login as Admin</button>
+            <button class="btn-secondary" onclick="backToRegular()">Back</button>
+        </div>
+    </div>
+
+    <div id="chatScreen" class="hidden">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">💬</div>
+                    <div class="logo-text">
+                        <h1>Ebymedias</h1>
+                        <p>Online Chat <span class="online-indicator"></span></p>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <div class="username-badge" id="usernameBadge">
+                        <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+                        <span id="displayUsername"></span>
+                    </div>
+                    <button class="admin-btn hidden" id="adminPanelBtn" onclick="toggleAdminPanel()">
+                        <i data-lucide="shield" style="width: 18px; height: 18px;"></i>
+                    </button>
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i id="themeIcon" data-lucide="sun" style="width: 18px; height: 18px; color: #facc15;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-container" id="messagesContainer">
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p style="opacity: 0.7;">Loading messages...</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-controls">
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                <button class="icon-btn" onclick="document.getElementById('imageInput').click()">
+                    <i data-lucide="image" style="width: 20px; height: 20px;"></i>
+                </button>
+                <input type="text" id="messageInput" class="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()">
+                    <i data-lucide="send" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-panel-content">
+            <h2>🔐 Admin Controls</h2>
+            <div class="admin-actions">
+                <button class="admin-action-btn btn-danger" onclick="clearAllMessages()">
+                    🗑️ Clear All Messages
+                </button>
+                <button class="admin-action-btn btn-close" onclick="toggleAdminPanel()">
+                    Close Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzUELxbbaL6Wb_M1uNhjwlZHVTorN9XJs",
+            authDomain: "my-whatsapp-2c1af.firebaseapp.com",
+            projectId: "my-whatsapp-2c1af",
+            storageBucket: "my-whatsapp-2c1af.firebasestorage.app",
+            messagingSenderId: "1089455460888",
+            appId: "1:1089455460888:web:d0c8dea185ba6769ebe96d"
+        };
+
+        const ADMIN_PASSWORD = "Ebymedias";
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const storage = getStorage(app);
+        const messagesRef = ref(database, 'ebymedias-messages');
+
+        let username = '';
+        let isAdmin = false;
+        let isDark = true;
+
+        window.setUsername = function() {
+            const input = document.getElementById('usernameInput');
+            if (input.value.trim()) {
+                username = input.value.trim();
+                startChat();
+            }
+        };
+
+        window.showAdminLogin = function() {
+            document.getElementById('usernameScreen').classList.add('hidden');
+            document.getElementById('adminLoginScreen').classList.remove('hidden');
+        };
+
+        window.backToRegular = function() {
+            document.getElementById('adminLoginScreen').classList.add('hidden');
+            document.getElementById('usernameScreen').classList.remove('hidden');
+        };
+
+        window.loginAdmin = function() {
+            const usernameInput = document.getElementById('adminUsernameInput');
+            const passwordInput = document.getElementById('adminPasswordInput');
+            
+            if (passwordInput.value === ADMIN_PASSWORD && usernameInput.value.trim()) {
+                username = usernameInput.value.trim();
+                isAdmin = true;
+                startChat();
+            } else {
+                alert('Invalid admin credentials!');
+            }
+        };
+
+        function startChat() {
+            document.getElementById('displayUsername').textContent = username;
+            if (isAdmin) {
+                document.getElementById('usernameBadge').classList.add('admin-badge');
+                document.getElementById('adminPanelBtn').classList.remove('hidden');
+            }
+            document.getElementById('usernameScreen').classList.add('hidden');
+            document.getElementById('adminLoginScreen').classList.add('hidden');
+            document.getElementById('chatScreen').classList.remove('hidden');
+            document.getElementById('messageInput').focus();
+            loadMessages();
+        }
+
+        window.toggleTheme = function() {
+            isDark = !isDark;
+            document.body.className = isDark ? 'dark' : 'light';
+            const icon = document.getElementById('themeIcon');
+            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            icon.style.color = isDark ? '#facc15' : '#a855f7';
+            lucide.createIcons();
+        };
+
+        window.toggleAdminPanel = function() {
+            document.getElementById('adminPanel').classList.toggle('hidden');
+        };
+
+        window.clearAllMessages = function() {
+            if (confirm('Are you sure you want to delete ALL messages? This cannot be undone!')) {
+                remove(messagesRef);
+                toggleAdminPanel();
+            }
+        };
+
+        window.deleteMessage = async function(messageId) {
+            if (!isAdmin) return;
+            if (confirm('Delete this message?')) {
+                const messageRef = ref(database, `ebymedias-messages/${messageId}`);
+                await remove(messageRef);
+            }
+        };
+
+        window.handleKeyPress = function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        };
+
+        window.sendMessage = async function() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                const message = {
+                    username: username,
+                    text: text,
+                    timestamp: Date.now(),
+                    type: 'text',
+                    isAdmin: isAdmin
+                };
+                
+                await push(messagesRef, message);
+                input.value = '';
+                input.focus();
+            }
+        };
+
+        window.handleImageUpload = async function(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                if (file.size > 5000000) {
+                    alert('Image too large. Please choose an image under 5MB.');
+                    return;
+                }
+
+                try {
+                    const imageRef = storageRef(storage, `images/${Date.now()}_${file.name}`);
+                    await uploadBytes(imageRef, file);
+                    const imageUrl = await getDownloadURL(imageRef);
+
+                    const message = {
+                        username: username,
+                        imageUrl: imageUrl,
+                        timestamp: Date.now(),
+                        type: 'image',
+                        isAdmin: isAdmin
+                    };
+
+                    await push(messagesRef, message);
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    alert('Failed to upload image. Please try again.');
+                }
+            }
+            event.target.value = '';
+        };
+
+        function loadMessages() {
+            const messagesQuery = query(messagesRef, orderByChild('timestamp'), limitToLast(100));
+            
+            onValue(messagesQuery, (snapshot) => {
+                const container = document.getElementById('messagesContainer');
+                const loadingState = document.getElementById('loadingState');
+                
+                if (loadingState) {
+                    loadingState.remove();
+                }
+
+                const messages = [];
+                snapshot.forEach((childSnapshot) => {
+                    messages.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                if (messages.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">💬</div>
+                            <p style="font-size: 18px; opacity: 0.7;">No messages yet. Start the conversation!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = messages.map(msg => `
+                    <div class="message ${msg.username === username ? 'own' : ''}">
+                        ${isAdmin ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}')">×</button>` : ''}
+                        <div class="message-content">
+                            <div class="message-meta">
+                                <span style="font-weight: 500;">${escapeHtml(msg.username)}${msg.isAdmin ? ' 👑' : ''}</span>
+                                <span>${formatTime(msg.timestamp)}</span>
+                            </div>
+                            <div class="message-bubble">
+                                ${msg.type === 'text' 
+                                    ? `<p>${escapeHtml(msg.text)}</p>` 
+                                    : `<img src="${msg.imageUrl}" alt="Shared image">`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+          </html>
